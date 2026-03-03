@@ -68,6 +68,7 @@ namespace YARG.Gameplay.Player
             var mode = Player.Profile.CurrentInstrument switch
             {
                 Instrument.ProDrums      => DrumsEngineParameters.DrumMode.ProFourLane,
+                Instrument.EliteDrums    => DrumsEngineParameters.DrumMode.ProFourLane,
                 Instrument.FourLaneDrums => DrumsEngineParameters.DrumMode.NonProFourLane,
                 Instrument.FiveLaneDrums => DrumsEngineParameters.DrumMode.FiveLane,
                 _                        => throw new Exception("Unreachable.")
