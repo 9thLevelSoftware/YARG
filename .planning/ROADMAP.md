@@ -5,7 +5,7 @@
 | # | Phase | Est. Plans | Status |
 |---|-------|-----------|--------|
 | 1 | Core Engine Integration | 2 | Complete (reviewed) |
-| 2 | Input & MIDI Binding | 2 | Pending |
+| 2 | Input & MIDI Binding | 2 | Complete |
 | 3 | Visual Highway | 3 | Pending |
 | 4 | End-to-End Integration & Polish | 2 | Pending |
 
