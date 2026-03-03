@@ -240,32 +240,6 @@ namespace YARG.Menu.Dialogs
                 return key;
             }
 
-            if (mode == GameMode.EliteDrums)
-            {
-                // This is confusing since we do both 4 and 5 lane with different prefabs
-                var key = bindingName switch
-                {
-                    "EliteDrums.FourLaneRedDrum" => _keyHighlights[0],
-                    "EliteDrums.FourLaneYellowDrum" => _keyHighlights[1],
-                    "EliteDrums.FourLaneBlueDrum" => _keyHighlights[2],
-                    "EliteDrums.FourLaneGreenDrum" => _keyHighlights[3],
-                    "EliteDrums.FourLaneYellowCymbal" => _keyHighlights[4],
-                    "EliteDrums.FourLaneBlueCymbal" => _keyHighlights[5],
-                    "EliteDrums.FourLaneGreenCymbal" => _keyHighlights[6],
-
-                    "Drums.Kick" => _mode == GameMode.FourLaneDrums ? _keyHighlights[7] : _keyHighlights[5],
-
-                    "EliteDrums.FiveLaneRedDrum" => _keyHighlights[0],
-                    "EliteDrums.FiveLaneBlueDrum" => _keyHighlights[2],
-                    "EliteDrums.FiveLaneGreenDrum" => _keyHighlights[4],
-                    "EliteDrums.FiveLaneYellowCymbal" => _keyHighlights[1],
-                    "EliteDrums.FiveLaneOrangeCymbal" => _keyHighlights[3],
-                    _ => null
-                };
-
-                return key;
-            }
-
             YargLogger.LogWarning($"Unsupported game mode for friendly binding: {_player.Profile.GameMode}");
             return null;
         }
