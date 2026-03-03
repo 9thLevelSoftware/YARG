@@ -1,122 +1,88 @@
-﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using YARG.Core;
+using YARG.Core.Logging;
 
 namespace YARG.Menu.Dialogs
 {
+    // Prefab wiring (FriendlyEliteDrumsBindingDialog.prefab):
+    // _eliteDrumHighlights array must have 13 elements:
+    //   [0] Kick, [1] Stomp, [2] Splash, [3] LeftCrash,
+    //   [4] ClosedHiHat, [5] SizzleHiHat, [6] OpenHiHat,
+    //   [7] Snare, [8] Tom1, [9] Tom2, [10] Tom3,
+    //   [11] Ride, [12] RightCrash
     public class EliteDrumsBindingDialog : FriendlyBindingDialog
     {
-        [Header("Pro Drums")]
+        [Header("Elite Drums Kit")]
         [SerializeField]
-        private Image _proDrumsKit;
-        [SerializeField]
-        private Image[] _proDrumsHighlights;
+        private Image _drumKitImage;
 
-        [Header("Five Lane Drums")]
+        [Header("Elite Drums Highlights (13 pads)")]
         [SerializeField]
-        private Image _fiveLaneKit;
-        [SerializeField]
-        private Image[] _fiveLaneHighlights;
-
-        private CurrentMode _currentMode;
+        private Image[] _eliteDrumHighlights;
 
         protected override (string initial, string complete) BindingMessages { get; set; } = (
-            "You must bind controls for both four lane and five lane mode.\nOnce you have completed this screen, the five lane binding dialog will be shown.",
+            "When a pad/cymbal is highlighted, strike the corresponding input on your drum kit.\n\nClick the Start button when you're ready to begin.",
             "Binding complete.\n\nYou will still need to manually set menu navigation bindings if you have not already."
         );
 
         public override void Initialize()
         {
-            Image = _proDrumsKit;
-            _keyHighlights = _proDrumsHighlights;
+            if (_eliteDrumHighlights == null || _eliteDrumHighlights.Length != 13)
+            {
+                YargLogger.LogError($"EliteDrumsBindingDialog: Expected 13 highlights, " +
+                    $"got {_eliteDrumHighlights?.Length ?? 0}. Check prefab wiring.");
+            }
+
+            Image = _drumKitImage;
+            _keyHighlights = _eliteDrumHighlights;
 
             base.Initialize();
 
-            // We bind four lane first (at least until Elite Drums actually exists)
-            _currentMode = CurrentMode.FourLaneDrums;
-
-            Title.text = "MIDI Drums (Four Lane) Binding";
-        }
-
-        private void SetFiveLaneDrums()
-        {
-            _currentMode = CurrentMode.FiveLaneDrums;
-            _mode = GameMode.FiveLaneDrums;
-
-            Title.text = "MIDI Drums (Five Lane) Binding";
-
-            foreach (var highlight in _keyHighlights)
-            {
-                highlight.gameObject.SetActive(false);
-            }
-
-            _keyHighlights = _fiveLaneHighlights;
-            foreach (var highlight in _keyHighlights)
-            {
-                highlight.gameObject.SetActive(false);
-            }
-
-            _proDrumsKit.gameObject.SetActive(false);
-            _fiveLaneKit.gameObject.SetActive(true);
-
-            Image = _fiveLaneKit;
+            Title.text = "Elite Drums Binding";
         }
 
         protected override void CheckForModeSwitch(string key, GameMode mode)
         {
-            if (_currentMode == CurrentMode.FourLaneDrums && key is not "Drums.Kick" && !key.StartsWith("EliteDrums.FourLane"))
-            {
-                SetFiveLaneDrums();
-            }
+            // Elite Drums is a single-mode dialog — no mode switching required
         }
 
         protected override bool IsKeyValid(GameMode mode, string key)
         {
-            if (mode == GameMode.FourLaneDrums && key.StartsWith("EliteDrums.FiveLane"))
-            {
-                return false;
-            }
-
-            if (mode == GameMode.FiveLaneDrums && (key.StartsWith("EliteDrums.FourLane") ||
-                key == "Drums.Kick"))
-            {
-                return false;
-            }
-
-            return true;
+            return key == "Drums.Kick" || key.StartsWith("EliteDrums.");
         }
 
         protected override Image GetHighlightByName(GameMode mode, string bindingName)
         {
-            // This is confusing since we do both 4 and 5 lane with different prefabs
-            var key = bindingName switch
+            if (_eliteDrumHighlights == null || _eliteDrumHighlights.Length != 13)
             {
-                "EliteDrums.FourLaneRedDrum"      => _keyHighlights[0],
-                "EliteDrums.FourLaneYellowDrum"   => _keyHighlights[1],
-                "EliteDrums.FourLaneBlueDrum"     => _keyHighlights[2],
-                "EliteDrums.FourLaneGreenDrum"    => _keyHighlights[3],
-                "EliteDrums.FourLaneYellowCymbal" => _keyHighlights[4],
-                "EliteDrums.FourLaneBlueCymbal"   => _keyHighlights[5],
-                "EliteDrums.FourLaneGreenCymbal"  => _keyHighlights[6],
+                return null;
+            }
 
-                "Drums.Kick" => _currentMode == CurrentMode.FourLaneDrums ? _keyHighlights[7] : _keyHighlights[5],
-
-                "EliteDrums.FiveLaneRedDrum"      => _keyHighlights[0],
-                "EliteDrums.FiveLaneBlueDrum"     => _keyHighlights[2],
-                "EliteDrums.FiveLaneGreenDrum"    => _keyHighlights[4],
-                "EliteDrums.FiveLaneYellowCymbal" => _keyHighlights[1],
-                "EliteDrums.FiveLaneOrangeCymbal" => _keyHighlights[3],
-                _                                 => null
+            var highlight = bindingName switch
+            {
+                "Drums.Kick"              => _eliteDrumHighlights[0],
+                "EliteDrums.Stomp"        => _eliteDrumHighlights[1],
+                "EliteDrums.Splash"       => _eliteDrumHighlights[2],
+                "EliteDrums.LeftCrash"    => _eliteDrumHighlights[3],
+                "EliteDrums.ClosedHiHat"  => _eliteDrumHighlights[4],
+                "EliteDrums.SizzleHiHat"  => _eliteDrumHighlights[5],
+                "EliteDrums.OpenHiHat"    => _eliteDrumHighlights[6],
+                "EliteDrums.Snare"        => _eliteDrumHighlights[7],
+                "EliteDrums.Tom1"         => _eliteDrumHighlights[8],
+                "EliteDrums.Tom2"         => _eliteDrumHighlights[9],
+                "EliteDrums.Tom3"         => _eliteDrumHighlights[10],
+                "EliteDrums.Ride"         => _eliteDrumHighlights[11],
+                "EliteDrums.RightCrash"   => _eliteDrumHighlights[12],
+                _ => null
             };
 
-            return key;
-        }
+            if (highlight is null)
+            {
+                YargLogger.LogWarning($"EliteDrumsBindingDialog: Unrecognized binding name '{bindingName}'.");
+            }
 
-        private enum CurrentMode
-        {
-            FourLaneDrums,
-            FiveLaneDrums
+            return highlight;
         }
     }
 }
