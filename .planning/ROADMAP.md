@@ -4,7 +4,7 @@
 
 | # | Phase | Est. Plans | Status |
 |---|-------|-----------|--------|
-| 1 | Core Engine Integration | 2 | Complete |
+| 1 | Core Engine Integration | 2 | Complete (reviewed) |
 | 2 | Input & MIDI Binding | 2 | Pending |
 | 3 | Visual Highway | 3 | Pending |
 | 4 | End-to-End Integration & Polish | 2 | Pending |
@@ -25,12 +25,12 @@
 - `YARG.Core/YARG.Core/Engine/Drums/Engines/YargDrumsEngine.cs` — verify input conversion paths
 
 **Success criteria**:
-- [ ] `SongChart.DrumsTracks` includes EliteDrums track
-- [ ] `SongChart.GetDrumsTrack(Instrument.EliteDrums)` returns the correct track
-- [ ] `SongChart.Append()` handles EliteDrums
-- [ ] `DrumsPlayer.CreateEngine()` creates engine for `GameMode.EliteDrums` without throwing
-- [ ] YARG.Core unit tests pass (existing + any new ones for Elite Drums paths)
-- [ ] Elite Drums instrument appears in song metadata when chart contains PART ELITE DRUMS
+- [x] `SongChart.DrumsTracks` includes EliteDrums track (via downcharted tracks; EliteDrumNote type constraint documented)
+- [x] `SongChart.GetDrumsTrack(Instrument.EliteDrums)` returns the correct track (returns FourLaneDrums downchart)
+- [x] `SongChart.Append()` handles EliteDrums
+- [x] `DrumsPlayer.CreateEngine()` creates engine for `GameMode.EliteDrums` without throwing
+- [x] YARG.Core unit tests pass (existing + any new ones for Elite Drums paths)
+- [x] Elite Drums instrument appears in song metadata when chart contains PART ELITE DRUMS
 
 **Recommended agents**: Backend Architect, Senior Developer, API Tester
 **Estimated plans**: 2
