@@ -13,7 +13,7 @@
 
 ## Current Phase
 
-**Phase 3: Visual Highway** — Complete (3/3 plans passed, pending review)
+**Phase 3: Visual Highway** — Complete (review passed, 2 cycles)
 
 ## Recent Decisions
 
@@ -40,7 +40,7 @@ None currently.
 
 ## Next Action
 
-Run `/legion:review` to verify Phase 3: Visual Highway
+Run `/legion:plan 4` to plan the next phase (End-to-End Integration & Polish)
 
 ## History
 
@@ -54,3 +54,4 @@ Run `/legion:review` to verify Phase 3: Visual Highway
 | 2026-03-03 | Phase 2 executed. 2/2 plans passed. Binding infrastructure enabled, dialog rewritten, engine mappings verified against downchart. |
 | 2026-03-03 | Phase 3 planned. 3 plans across 3 waves. Spec written + critiqued. Plan critique: CAUTION verdict, 9 mitigations applied (color indices, missing methods, runtime assertions, debug support, replay fix). |
 | 2026-03-03 | Phase 3 executed. 3/3 plans passed. Visual infrastructure, player+note classes, and prefab wiring complete. Path B correlation (tick-based Dict). 4 manual Unity Editor steps remain. |
+| 2026-03-03 | Phase 3 review passed (2 cycles). 6 warnings fixed: replay input tracking, serialization version bump, hat pedal reset, drum fill effects, lefty flip constant, enum caching. Reviewers: Reality Checker, Evidence Collector. |
