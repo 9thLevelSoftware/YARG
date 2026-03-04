@@ -3,17 +3,17 @@
 ## Progress
 
 ```
-[#######...] 78% complete
+[##########] 100% complete
 ```
 
 - **Total phases**: 4
 - **Total estimated plans**: 9
-- **Phases completed**: 3
-- **Plans completed**: 7
+- **Phases completed**: 4
+- **Plans completed**: 9
 
 ## Current Phase
 
-**Phase 3: Visual Highway** — Complete (review passed, 2 cycles)
+**Phase 4: End-to-End Integration & Polish** — Complete (2/2 plans passed)
 
 ## Recent Decisions
 
@@ -33,6 +33,8 @@
 | 2026-03-03 | Sizzle hat state deferred to post-MVP | EliteDrumsHatState enum lacks Sizzle value; chart loader doesn't parse it. Requires YARG.Core change. |
 | 2026-03-03 | 1-based color indices for IFretColorProvider | FretArray.InitializeColor passes i+1 to color provider. Index 0=Kick, 1-8=pads. Critique finding. |
 | 2026-03-03 | ConstructReplayData must be implemented | Abstract on BasePlayer. Critique finding: missing from original plan, added as mitigation. |
+| 2026-03-03 | Fix pre-existing ModifierIcon bug in Phase 4 | ModifierIcon.cs:85 uses FiveFretGuitar preset for drums' NoStarPowerOverlap. Critique finding. |
+| 2026-03-03 | Verify Phase 3 prefab steps before testing | 4 manual Unity Editor steps are prerequisite for end-to-end testing. Critique finding. |
 
 ## Blockers
 
@@ -40,7 +42,7 @@ None currently.
 
 ## Next Action
 
-Run `/legion:plan 4` to plan the next phase (End-to-End Integration & Polish)
+Run `/legion:review` to verify Phase 4: End-to-End Integration & Polish
 
 ## History
 
@@ -55,3 +57,5 @@ Run `/legion:plan 4` to plan the next phase (End-to-End Integration & Polish)
 | 2026-03-03 | Phase 3 planned. 3 plans across 3 waves. Spec written + critiqued. Plan critique: CAUTION verdict, 9 mitigations applied (color indices, missing methods, runtime assertions, debug support, replay fix). |
 | 2026-03-03 | Phase 3 executed. 3/3 plans passed. Visual infrastructure, player+note classes, and prefab wiring complete. Path B correlation (tick-based Dict). 4 manual Unity Editor steps remain. |
 | 2026-03-03 | Phase 3 review passed (2 cycles). 6 warnings fixed: replay input tracking, serialization version bump, hat pedal reset, drum fill effects, lefty flip constant, enum caching. Reviewers: Reality Checker, Evidence Collector. |
+| 2026-03-03 | Phase 4 planned. 2 plans across 2 waves. Critique: CAUTION verdict, 4 mitigations applied (pre-existing ModifierIcon bug, prefab prerequisite check, replay verification, partial chart null safety). |
+| 2026-03-03 | Phase 4 executed. 2/2 plans passed. Song selection enabled, integration gaps fixed, critical AudioHelpers bug caught and fixed, DifficultySelectMenu fallbacks added. 1 critical + 2 medium bugs found by verification and fixed. 4 manual Unity Editor steps remain. |
