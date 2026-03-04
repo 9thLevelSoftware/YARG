@@ -214,6 +214,7 @@ namespace YARG.Settings.Metadata
                             nameof(ColorProfile.FiveFretGuitar) => GameMode.FiveFretGuitar,
                             nameof(ColorProfile.FourLaneDrums)  => GameMode.FourLaneDrums,
                             nameof(ColorProfile.FiveLaneDrums)  => GameMode.FiveLaneDrums,
+                            nameof(ColorProfile.EliteDrums)     => GameMode.EliteDrums,
                             nameof(ColorProfile.ProKeys)        => GameMode.ProKeys,
                             _                                   => throw new Exception("Unreachable.")
                         };

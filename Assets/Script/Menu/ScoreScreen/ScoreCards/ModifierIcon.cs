@@ -92,7 +92,7 @@ namespace YARG.Menu.ScoreScreen
                     break;
                 case GameMode.ProKeys:
                     // No Star Power Overlap
-                    if (enginePreset.FiveFretGuitar.NoStarPowerOverlap)
+                    if (enginePreset.ProKeys.NoStarPowerOverlap)
                     {
                         var icon = Instantiate(prefab, parent);
                         icon.InitializeCustom(NO_STAR_POWER_OVERLAP);

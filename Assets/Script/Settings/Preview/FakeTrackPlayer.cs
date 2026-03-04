@@ -210,6 +210,66 @@ namespace YARG.Settings.Preview
                 }
             },
             {
+                GameMode.EliteDrums,
+                new Info
+                {
+                    FretCount = 8,
+                    UseKickFrets = true,
+
+                    FretColorProvider = (colorProfile) => colorProfile.EliteDrums,
+                    NoteColorProvider = (colorProfile, note) =>
+                    {
+                        // Kick is rendered separately; lanes 1-8 map to GetNoteColor(fret-1)
+                        if (note.Fret == 0)
+                        {
+                            return colorProfile.EliteDrums
+                                .GetFretColor(0)
+                                .ToUnityColor();
+                        }
+
+                        return colorProfile.EliteDrums
+                            .GetNoteColor(note.Fret - 1)
+                            .ToUnityColor();
+                    },
+
+                    HitWindowProvider = (enginePreset) => enginePreset.Drums.HitWindow,
+
+                    CreateFakeNote = (time) =>
+                    {
+                        // 0 = Kick, 1-8 = HiHat, LeftCrash, Snare, Tom1, Tom2, Tom3, Ride, RightCrash
+                        int fret = Random.Range(0, 9);
+
+                        // Kick notes have different models
+                        if (fret == 0)
+                        {
+                            return new FakeNoteData
+                            {
+                                Time = time,
+
+                                Fret = fret,
+                                CenterNote = true,
+                                NoteType = ThemeNoteType.Kick
+                            };
+                        }
+
+                        // Cymbals: HiHat(1), LeftCrash(2), Ride(7), RightCrash(8)
+                        // Drums: Snare(3), Tom1(4), Tom2(5), Tom3(6)
+                        var noteType = fret is 1 or 2 or 7 or 8
+                            ? ThemeNoteType.Cymbal
+                            : ThemeNoteType.Normal;
+
+                        return new FakeNoteData
+                        {
+                            Time = time,
+
+                            Fret = fret,
+                            CenterNote = false,
+                            NoteType = noteType
+                        };
+                    }
+                }
+            },
+            {
                 GameMode.ProKeys,
                 new Info
                 {
