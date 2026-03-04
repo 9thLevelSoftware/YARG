@@ -336,6 +336,7 @@ namespace YARG.Gameplay
             {
                 FiveFretGuitarPlayer => "Five Fret Guitar",
                 FiveLaneKeysPlayer => "Five Lane Keys",
+                EliteDrumsPlayer => "Elite Drums",
                 DrumsPlayer => "Drums",
                 VocalsPlayer => "Vocals",
                 ProKeysPlayer => "Pro Keys",
@@ -372,6 +373,22 @@ namespace YARG.Gameplay
                         text.AppendFormat("- Ghost inputs: {0}\n", stats.GhostInputs);
                         text.AppendFormat("- HOPOs strummed: {0}\n", stats.HoposStrummed);
                         text.AppendFormat("- Sustain score: {0}\n", stats.SustainScore);
+
+                        GUILayout.Label(text.AsSpan().TrimEnd('\n').ToString());
+                        break;
+                    }
+
+                    case EliteDrumsPlayer eliteDrumsPlayer:
+                    {
+                        using var text = ZString.CreateStringBuilder(true);
+
+                        var engine = eliteDrumsPlayer.Engine;
+                        text.AppendLine("State:");
+                        text.AppendLine("- No persistent state");
+
+                        var stats = eliteDrumsPlayer.Engine.EngineStats;
+                        text.AppendLine("\nStats:");
+                        text.AppendFormat("- Overhits: {0}\n", stats.Overhits);
 
                         GUILayout.Label(text.AsSpan().TrimEnd('\n').ToString());
                         break;
