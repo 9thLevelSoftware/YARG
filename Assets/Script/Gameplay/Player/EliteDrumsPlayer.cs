@@ -58,9 +58,16 @@ namespace YARG.Gameplay.Player
         private readonly Queue<(EliteDrumsAction action, double time)> _lastEliteActions = new();
         private const int MAX_ELITE_ACTION_QUEUE_SIZE = 32;
 
+        // Replay elite input tracking (mirrors BasePlayer._replayInputIndex for elite actions)
+        private int _replayEliteInputIndex;
+
         // Fret flash tracking
         private Dictionary<int, float> _fretToLastPressedTimeDelta = new();
         private Dictionary<Fret.AnimType, Dictionary<int, float>> _animTypeToFretToLastPressedDelta = new();
+
+        // Cached enum values to avoid per-frame allocation
+        private static readonly Fret.AnimType[] _animTypes =
+            (Fret.AnimType[]) Enum.GetValues(typeof(Fret.AnimType));
 
         // Hat pedal tracking
         private HatPedalIndicator? _hatPedalIndicator;
@@ -177,6 +184,9 @@ namespace YARG.Gameplay.Player
             NoteTrack.SetDrumActivationFlags(Player.Profile.StarPowerActivationType);
             Notes = NoteTrack.Notes;
 
+            // Set up drum fill lead-ups
+            SetDrumFillEffects();
+
             // Initialize hit timestamps
             InitializeHitTimes();
             InitializeAnimTypes();
@@ -290,6 +300,85 @@ namespace YARG.Gameplay.Player
             return expectedPad.HasValue && expectedPad.Value == drumNote.Pad;
         }
 
+        private void SetDrumFillEffects()
+        {
+            int checkpoint = 0;
+            var pairedFillIndexes = new HashSet<int>();
+
+            // Find activation gems
+            foreach (var chord in Notes)
+            {
+                DrumNote rightmostNote = chord.ParentOrSelf;
+                bool foundStarpower = false;
+
+                // Check for SP activation note
+                foreach (var note in chord.AllNotes)
+                {
+                    if (note.IsStarPowerActivator)
+                    {
+                        if (note.Pad > rightmostNote.Pad)
+                        {
+                            rightmostNote = note;
+                        }
+                        foundStarpower = true;
+                    }
+                }
+
+                if (!foundStarpower)
+                {
+                    continue;
+                }
+
+                // Elite drums: pad index maps directly to lane (no split view conversion needed)
+                int fillLane = rightmostNote.Pad;
+
+                int candidateIndex = -1;
+
+                // Find the drum fill immediately before this note
+                for (var i = checkpoint; i < _trackEffects.Count; i++)
+                {
+                    if (_trackEffects[i].EffectType != TrackEffectType.DrumFill)
+                    {
+                        continue;
+                    }
+
+                    var effect = _trackEffects[i];
+
+                    if (effect.TimeEnd <= chord.Time)
+                    {
+                        candidateIndex = i;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (candidateIndex != -1)
+                {
+                    _trackEffects[candidateIndex].FillLane = fillLane;
+                    _trackEffects[candidateIndex].TotalLanes = _fretArray.FretCount;
+                    pairedFillIndexes.Add(candidateIndex);
+                    checkpoint = candidateIndex;
+
+                    // Also make sure that the fill effect actually extends to the note
+                    if (_trackEffects[candidateIndex].TimeEnd < chord.TimeEnd)
+                    {
+                        TrackEffect.ExtendEffect(candidateIndex, chord.TimeEnd, NoteSpeed, ref _trackEffects);
+                    }
+                }
+            }
+
+            // Remove fills that are not paired with a note
+            for (var i = _trackEffects.Count - 1; i >= 0; i--)
+            {
+                if (_trackEffects[i].EffectType == TrackEffectType.DrumFill && !pairedFillIndexes.Contains(i))
+                {
+                    _trackEffects.RemoveAt(i);
+                }
+            }
+        }
+
         public override void SetStemMuteState(bool muted)
         {
             if (IsStemMuted != muted)
@@ -309,6 +398,8 @@ namespace YARG.Gameplay.Player
             base.ResetVisuals();
 
             _fretArray.ResetAll();
+            _hatPedalIndicator?.Reset();
+            _replayEliteInputIndex = 0;
         }
 
         protected override void OnNoteHit(int index, DrumNote note)
@@ -387,7 +478,7 @@ namespace YARG.Gameplay.Player
                 // but since InterceptInput isn't called, we extract elite actions here.
                 // We peek at upcoming replay inputs and pre-populate the queue.
                 var replayInputs = ReplayInputs;
-                for (int i = 0; i < replayInputs.Count; i++)
+                for (int i = _replayEliteInputIndex; i < replayInputs.Count; i++)
                 {
                     var input = replayInputs[i];
                     if (input.Time > time + InputCalibration) break;
@@ -396,6 +487,7 @@ namespace YARG.Gameplay.Player
                         var eliteAction = input.GetAction<EliteDrumsAction>();
                         _lastEliteActions.Enqueue((eliteAction, input.Time));
                     }
+                    _replayEliteInputIndex = i + 1;
                 }
 
                 while (_lastEliteActions.Count > MAX_ELITE_ACTION_QUEUE_SIZE)
@@ -625,7 +717,7 @@ namespace YARG.Gameplay.Player
 
         private void InitializeAnimTypes()
         {
-            foreach (Fret.AnimType animType in Enum.GetValues(typeof(Fret.AnimType)))
+            foreach (var animType in _animTypes)
             {
                 _animTypeToFretToLastPressedDelta[animType] = new Dictionary<int, float>();
 
@@ -653,7 +745,7 @@ namespace YARG.Gameplay.Player
 
         private void UpdateAnimTimes()
         {
-            foreach (Fret.AnimType animType in Enum.GetValues(typeof(Fret.AnimType)))
+            foreach (var animType in _animTypes)
             {
                 for (int fret = 0; fret < _fretArray.FretCount; fret++)
                 {

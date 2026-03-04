@@ -220,7 +220,7 @@ namespace YARG.Gameplay.Visuals
             // Handle lefty flip: reverse the color index
             if (LeftyFlip)
             {
-                colorIndex = 7 - colorIndex;
+                colorIndex = ELITE_LANE_COUNT - 1 - colorIndex;
             }
 
             // Determine the correct color
