@@ -13,7 +13,7 @@
 
 ## Current Phase
 
-**Phase 4: End-to-End Integration & Polish** — Complete (2/2 plans passed)
+**Phase 4: End-to-End Integration & Polish** — Complete (review passed, 2 cycles)
 
 ## Recent Decisions
 
@@ -42,7 +42,7 @@ None currently.
 
 ## Next Action
 
-Run `/legion:review` to verify Phase 4: End-to-End Integration & Polish
+All phases complete — project review finished!
 
 ## History
 
@@ -59,3 +59,4 @@ Run `/legion:review` to verify Phase 4: End-to-End Integration & Polish
 | 2026-03-03 | Phase 3 review passed (2 cycles). 6 warnings fixed: replay input tracking, serialization version bump, hat pedal reset, drum fill effects, lefty flip constant, enum caching. Reviewers: Reality Checker, Evidence Collector. |
 | 2026-03-03 | Phase 4 planned. 2 plans across 2 waves. Critique: CAUTION verdict, 4 mitigations applied (pre-existing ModifierIcon bug, prefab prerequisite check, replay verification, partial chart null safety). |
 | 2026-03-03 | Phase 4 executed. 2/2 plans passed. Song selection enabled, integration gaps fixed, critical AudioHelpers bug caught and fixed, DifficultySelectMenu fallbacks added. 1 critical + 2 medium bugs found by verification and fixed. 4 manual Unity Editor steps remain. |
+| 2026-03-03 | Phase 4 review passed (2 cycles). 1 blocker + 4 warnings fixed: ReplayInfo deserialization, FakeTrackPlayer/PresetSubTab EliteDrums entries, ProKeys preset bug, 6 unit tests added. Reviewers: Reality Checker, Workflow Optimizer. |
