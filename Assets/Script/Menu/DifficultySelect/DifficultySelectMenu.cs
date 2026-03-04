@@ -710,6 +710,10 @@ namespace YARG.Menu.DifficultySelect
                 Instrument.ProDrums      => entry.HasInstrument(Instrument.FiveLaneDrums),
                 // Allow 4 -> 5-lane conversions to be played on 5-lane
                 Instrument.FiveLaneDrums => entry.HasInstrument(Instrument.ProDrums),
+                // Elite Drums can fall back to any drum track
+                Instrument.EliteDrums    => entry.HasInstrument(Instrument.FourLaneDrums)
+                                         || entry.HasInstrument(Instrument.ProDrums)
+                                         || entry.HasInstrument(Instrument.FiveLaneDrums),
                 _ => false
             };
         }
@@ -730,6 +734,10 @@ namespace YARG.Menu.DifficultySelect
                 Instrument.ProDrums      => entry[Instrument.FiveLaneDrums][difficulty],
                 // Allow 4 -> 5-lane conversions to be played on 5-lane
                 Instrument.FiveLaneDrums => entry[Instrument.ProDrums][difficulty],
+                // Elite Drums can fall back to any drum track
+                Instrument.EliteDrums    => entry[Instrument.FourLaneDrums][difficulty]
+                                         || entry[Instrument.ProDrums][difficulty]
+                                         || entry[Instrument.FiveLaneDrums][difficulty],
                 _ => false
             };
         }
