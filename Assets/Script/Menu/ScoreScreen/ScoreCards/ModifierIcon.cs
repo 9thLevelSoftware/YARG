@@ -72,6 +72,7 @@ namespace YARG.Menu.ScoreScreen
                     }
 
                     break;
+                case GameMode.EliteDrums:
                 case GameMode.FiveLaneDrums:
                 case GameMode.FourLaneDrums:
                     // Dynamic Hit Window
@@ -82,7 +83,7 @@ namespace YARG.Menu.ScoreScreen
                     }
 
                     // No Star Power Overlap
-                    if (enginePreset.FiveFretGuitar.NoStarPowerOverlap)
+                    if (enginePreset.Drums.NoStarPowerOverlap)
                     {
                         var icon = Instantiate(prefab, parent);
                         icon.InitializeCustom(NO_STAR_POWER_OVERLAP);
