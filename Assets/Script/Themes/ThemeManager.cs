@@ -174,6 +174,8 @@ namespace YARG.Themes
         FiveLaneDrums,
 
         FiveLaneKeys,
-        ProKeys
+        ProKeys,
+
+        EliteDrums
     }
 }

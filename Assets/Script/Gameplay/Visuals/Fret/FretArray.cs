@@ -187,7 +187,7 @@ namespace YARG.Gameplay.Visuals
 
         public void PlayMissAnimation(int index)
         {
-            if (0 <= index && index <= _frets.Count)
+            if (0 <= index && index < _frets.Count)
             {
                 _frets[index].PlayMissAnimation();
                 _frets[index].PlayMissParticles();

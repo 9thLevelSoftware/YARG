@@ -48,6 +48,7 @@ namespace YARG.Themes
                 VisualStyle.FiveLaneKeys   => _fiveFretNotes,
                 VisualStyle.FourLaneDrums  => _fourLaneNotes,
                 VisualStyle.FiveLaneDrums  => _fiveLaneNotes,
+                VisualStyle.EliteDrums     => _fourLaneNotes,
                 VisualStyle.ProKeys        => _proKeysNotes,
                 _ => throw new Exception("Unreachable.")
             };
@@ -89,6 +90,7 @@ namespace YARG.Themes
                 VisualStyle.FiveLaneKeys => _fiveFretFret,
                 VisualStyle.FourLaneDrums  => _fourLaneFret,
                 VisualStyle.FiveLaneDrums  => _fiveLaneFret,
+                VisualStyle.EliteDrums     => _fourLaneFret,
                 _  => throw new Exception("Unreachable.")
             };
         }

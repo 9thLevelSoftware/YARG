@@ -17,7 +17,8 @@ namespace YARG.Themes
                 VisualStyle.FourLaneDrums,
                 VisualStyle.FiveLaneDrums,
                 VisualStyle.FiveLaneKeys,
-                VisualStyle.ProKeys
+                VisualStyle.ProKeys,
+                VisualStyle.EliteDrums
             },
             PreferredColorProfile = ColorProfile.Default.Id,
             PreferredCameraPreset = CameraPreset.Default.Id
