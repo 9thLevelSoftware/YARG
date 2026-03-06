@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using YARG.Core.Chart;
 using YARG.Gameplay.Player;
@@ -20,7 +20,16 @@ namespace YARG.Gameplay.Visuals
 
         public Beatline BeatlineRef;
 
+        private float _baseXScale;
+
         public override double ElementTime => BeatlineRef.Time;
+
+        protected override void GameplayAwake()
+        {
+            base.GameplayAwake();
+
+            _baseXScale = _meshRenderer.transform.localScale.x;
+        }
 
         protected override void InitializeElement()
         {
@@ -48,7 +57,9 @@ namespace YARG.Gameplay.Visuals
             }
 
             var cachedTransform = _meshRenderer.transform;
-            cachedTransform.localScale = cachedTransform.localScale.WithY(yScale);
+            float widthScale = Player.TrackWidthOverride / TrackPlayer.TRACK_WIDTH;
+            cachedTransform.localScale = new Vector3(
+                _baseXScale * widthScale, yScale, cachedTransform.localScale.z);
 
             var material = _meshRenderer.material;
             var color = material.color;

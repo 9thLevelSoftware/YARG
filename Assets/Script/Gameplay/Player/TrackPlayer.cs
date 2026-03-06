@@ -25,6 +25,11 @@ namespace YARG.Gameplay.Player
 
         public const float TRACK_WIDTH  = 2f;
 
+        /// <summary>
+        /// Per-player track width. Override in subclasses for wider tracks (e.g. Elite Drums).
+        /// </summary>
+        public virtual float TrackWidthOverride => TRACK_WIDTH;
+
         public static int HighwayCount = 1;
 
         public double SpawnTimeOffset => (ZeroFadePosition + _spawnAheadDelay + -STRIKE_LINE_POS) / NoteSpeed;

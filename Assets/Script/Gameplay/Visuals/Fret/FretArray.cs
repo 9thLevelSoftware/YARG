@@ -35,6 +35,15 @@ namespace YARG.Gameplay.Visuals
         private bool[] _pulsingFrets;
         private float  _pulseDuration;
 
+        /// <summary>
+        /// Sets the track width used for fret positioning and scaling.
+        /// Must be called before <see cref="Initialize"/>.
+        /// </summary>
+        public void SetTrackWidth(float width)
+        {
+            _trackWidth = width;
+        }
+
         public void Initialize(ThemePreset themePreset, VisualStyle style,
             ColorProfile.IFretColorProvider fretColorProvider, bool leftyFlip, bool splitProTomsAndCymbals, bool swapSnareAndHiHat, bool swapCrashAndRide)
         {
@@ -59,7 +68,8 @@ namespace YARG.Gameplay.Visuals
                 fret.SetActive(true);
 
                 // Position
-                float x = _trackWidth / FretCount * effectivePosition - _trackWidth / 2f + 1f / FretCount;
+                float laneWidth = _trackWidth / FretCount;
+                float x = laneWidth * effectivePosition - _trackWidth / 2f + laneWidth / 2f;
                 fret.transform.localPosition = new Vector3(leftyFlip ? -x : x, 0f, 0f);
 
                 // Scale
@@ -83,9 +93,12 @@ namespace YARG.Gameplay.Visuals
                 var rightKick = Instantiate(kickFretPrefab, transform);
                 rightKick.SetActive(true);
 
-                // Position kick frets
-                leftKick.transform.localPosition = _leftKickFretPosition.localPosition;
-                rightKick.transform.localPosition = _rightKickFretPosition.localPosition;
+                // Position kick frets (scale X position proportionally to track width)
+                float kickWidthScale = _trackWidth / 2f;
+                var leftPos = _leftKickFretPosition.localPosition;
+                var rightPos = _rightKickFretPosition.localPosition;
+                leftKick.transform.localPosition = new Vector3(leftPos.x * kickWidthScale, leftPos.y, leftPos.z);
+                rightKick.transform.localPosition = new Vector3(rightPos.x * kickWidthScale, rightPos.y, rightPos.z);
                 rightKick.transform.localScale = rightKick.transform.localScale.InvertX();
 
                 // Add kick frets

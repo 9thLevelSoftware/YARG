@@ -16,6 +16,7 @@ namespace YARG.Gameplay.Visuals
     public sealed class EliteDrumsNoteElement : NoteElement<DrumNote, EliteDrumsPlayer>, IThemeNoteCreator
     {
         private const int ELITE_LANE_COUNT = 8;
+        private const float ELITE_TRACK_WIDTH = 3f;
 
         protected enum NoteType
         {
@@ -88,8 +89,9 @@ namespace YARG.Gameplay.Visuals
                 // Non-kick notes: position in 8-lane layout using 1-based lane index
                 int lane = ElitePadInfo.GetLaneIndex(_padInfo.Pad);
 
+                transform.localScale = Vector3.one;
                 transform.localPosition = new Vector3(
-                    GetElementX(lane, ELITE_LANE_COUNT), 0f, 0f) * LeftyFlipMultiplier;
+                    GetElementX(lane, ELITE_LANE_COUNT, ELITE_TRACK_WIDTH), 0f, 0f) * LeftyFlipMultiplier;
 
                 // Select note group based on dynamics and cymbal status
                 NoteGroup = noteGroups[GetNoteGroup(_padInfo.IsCymbal)];
@@ -110,8 +112,10 @@ namespace YARG.Gameplay.Visuals
             }
             else
             {
-                // Kick notes: center position
+                // Kick notes: center position, scaled wider to match Elite Drums track
                 transform.localPosition = Vector3.zero;
+                float kickWidthScale = ELITE_TRACK_WIDTH / TrackPlayer.TRACK_WIDTH;
+                transform.localScale = new Vector3(kickWidthScale, 1f, 1f);
                 NoteGroup = noteGroups[(int) NoteType.Kick];
             }
 

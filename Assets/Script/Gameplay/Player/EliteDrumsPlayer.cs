@@ -31,6 +31,13 @@ namespace YARG.Gameplay.Player
         /// </summary>
         private const int ELITE_LANE_COUNT = 8;
 
+        /// <summary>
+        /// Wider track width for 8-lane Elite Drums layout.
+        /// </summary>
+        private const float ELITE_TRACK_WIDTH = 3f;
+
+        public override float TrackWidthOverride => ELITE_TRACK_WIDTH;
+
         public DrumsEngineParameters EngineParams { get; private set; } = null!;
 
         [Header("Elite Drums Specific")]
@@ -163,10 +170,21 @@ namespace YARG.Gameplay.Player
         {
             StarScoreThresholds = PopulateStarScoreThresholds(StarMultiplierThresholds, Engine.BaseScore);
 
+            // Widen only the Track mesh surface to match the wider Elite Drums layout.
+            // Do NOT scale Strikeline — the Fret Array is its child and would be double-scaled.
+            float widthRatio = ELITE_TRACK_WIDTH / TRACK_WIDTH;
+            var trackTransform = transform.Find("Track");
+            if (trackTransform != null)
+            {
+                var scale = trackTransform.localScale;
+                trackTransform.localScale = new Vector3(scale.x * widthRatio, scale.y, scale.z);
+            }
+
             // 8-lane fret array with EliteDrumsColors provider
             ColorProfile.IFretColorProvider colors = Player.ColorProfile.EliteDrums;
 
             _fretArray.FretCount = ELITE_LANE_COUNT;
+            _fretArray.SetTrackWidth(ELITE_TRACK_WIDTH);
             _fretArray.Initialize(
                 Player.ThemePreset,
                 VisualStyle.EliteDrums,
@@ -177,8 +195,11 @@ namespace YARG.Gameplay.Player
                 false  // swapCrashAndRide — not applicable to Elite
             );
 
-            // Kick fret flash
+            // Kick fret flash — scale wider to match the Elite Drums track
             _kickFretFlash.Initialize(colors.GetParticleColor(0).ToUnityColor());
+            var kickFlashScale = _kickFretFlash.transform.localScale;
+            _kickFretFlash.transform.localScale = new Vector3(
+                kickFlashScale.x * widthRatio, kickFlashScale.y, kickFlashScale.z);
 
             // Initialize drum activation notes
             NoteTrack.SetDrumActivationFlags(Player.Profile.StarPowerActivationType);
@@ -329,8 +350,10 @@ namespace YARG.Gameplay.Player
                     continue;
                 }
 
-                // Elite drums: pad index maps directly to lane (no split view conversion needed)
-                int fillLane = rightmostNote.Pad;
+                // Find the corresponding elite pad for the rightmost note
+                var padInfo = ResolveElitePadInfo(rightmostNote);
+                int fillLane = ElitePadInfo.GetFretIndex(padInfo.Pad);
+                if (fillLane < 0) fillLane = 0; // Fallback
 
                 int candidateIndex = -1;
 
@@ -780,6 +803,16 @@ namespace YARG.Gameplay.Player
             if (_animTypeToFretToLastPressedDelta[Fret.AnimType.CorrectSoft][fret] < DRUM_PAD_FLASH_HOLD_DURATION)
             {
                 return Fret.AnimType.CorrectSoft;
+            }
+
+            if (_animTypeToFretToLastPressedDelta[Fret.AnimType.TooHard][fret] < DRUM_PAD_FLASH_HOLD_DURATION)
+            {
+                return Fret.AnimType.TooHard;
+            }
+
+            if (_animTypeToFretToLastPressedDelta[Fret.AnimType.TooSoft][fret] < DRUM_PAD_FLASH_HOLD_DURATION)
+            {
+                return Fret.AnimType.TooSoft;
             }
 
             return Fret.AnimType.CorrectNormal;

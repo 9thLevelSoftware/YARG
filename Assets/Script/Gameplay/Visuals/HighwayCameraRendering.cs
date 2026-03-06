@@ -57,6 +57,7 @@ namespace YARG.Gameplay.Visuals
         private readonly Matrix4x4[]       _camInvViewMatrices = new Matrix4x4[MAX_MATRICES];
         private readonly Matrix4x4[]       _camProjMatrices    = new Matrix4x4[MAX_MATRICES];
         private readonly float[]           _laneScales         = new float[MAX_MATRICES];
+        private readonly float[]           _trackWidths        = new float[MAX_MATRICES];
 
         public static readonly int YargHighwaysNumberID = Shader.PropertyToID("_YargHighwaysN");
         public static readonly int YargHighwayCamViewMatricesID = Shader.PropertyToID("_YargCamViewMatrices");
@@ -71,6 +72,9 @@ namespace YARG.Gameplay.Visuals
             _gameManager = FindAnyObjectByType<GameManager>();
             _renderCamera = GetComponent<Camera>();
             _fadeCalcPass ??= new FadePass(this);
+
+            // Initialize track widths to the default
+            Array.Fill(_trackWidths, TrackPlayer.TRACK_WIDTH);
 
             RecreateHighwayOutputTexture();
             Shader.SetGlobalInteger(YargHighwaysNumberID, 0);
@@ -236,13 +240,14 @@ namespace YARG.Gameplay.Visuals
 
         // This is only directly used for fake track player really
         // Rest should go through AddPlayer
-        public void AddPlayerParams(Vector3 position, Camera trackCamera, float curveFactor, float zeroFadePosition, float fadeSize, float raisedRotation, bool allowTextureRecreation = true)
+        public void AddPlayerParams(Vector3 position, Camera trackCamera, float curveFactor, float zeroFadePosition, float fadeSize, float raisedRotation, bool allowTextureRecreation = true, float trackWidth = TrackPlayer.TRACK_WIDTH)
         {
             _allowTextureRecreation = allowTextureRecreation;
             var index = _cameras.Count;
             _cameras.Add(trackCamera);
             _raisedRotations.Add(raisedRotation);
             _highwayPositions.Add(position);
+            _trackWidths[index] = trackWidth;
             UpdateCurveFactor(curveFactor, index);
             UpdateFadeParams(index, zeroFadePosition, fadeSize);
             _needsCameraReset = true;
@@ -277,7 +282,7 @@ namespace YARG.Gameplay.Visuals
             // This effectively disables rendering it but keeps components active
             var cameraData = trackPlayer.TrackCamera.GetUniversalAdditionalCameraData();
             cameraData.renderType = CameraRenderType.Overlay;
-            AddPlayerParams(trackPlayer.transform.position, trackPlayer.TrackCamera, trackPlayer.Player.CameraPreset.CurveFactor, trackPlayer.ZeroFadePosition, trackPlayer.FadeSize, trackPlayer.Player.CameraPreset.Rotation);
+            AddPlayerParams(trackPlayer.transform.position, trackPlayer.TrackCamera, trackPlayer.Player.CameraPreset.CurveFactor, trackPlayer.ZeroFadePosition, trackPlayer.FadeSize, trackPlayer.Player.CameraPreset.Rotation, trackWidth: trackPlayer.TrackWidthOverride);
         }
 
         private void ResetHighwayAlphaTexture()
@@ -525,7 +530,7 @@ namespace YARG.Gameplay.Visuals
             float zPositionAtPercent = Mathf.LerpUnclamped(strikelineZ, zeroFadeZ, y);
 
             // Calculate X position (position across the track width)
-            float trackWidth = TrackPlayer.TRACK_WIDTH;
+            float trackWidth = _trackWidths[trackIndex];
             float xOffset = Mathf.LerpUnclamped(-trackWidth / 2f, trackWidth / 2f, x);
 
             // Calculate screen space from world position
@@ -570,7 +575,7 @@ namespace YARG.Gameplay.Visuals
             }
 
             // Get the world space positions of the track corners assuming the screen bottom is the widest part of the track
-            float halfWidth = TrackPlayer.TRACK_WIDTH / 2f;
+            float halfWidth = _trackWidths[cameraIndex] / 2f;
             var trackBottom = FindTrackBottom(camera, trackPosition);
             var trackTop = _zeroFadePositions[cameraIndex];
 

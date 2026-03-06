@@ -51,9 +51,10 @@ namespace YARG.Gameplay.Visuals
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static float GetElementX(int index, int subdivisions)
+        protected static float GetElementX(int index, int subdivisions, float trackWidth = TrackPlayer.TRACK_WIDTH)
         {
-            return TrackPlayer.TRACK_WIDTH / subdivisions * index - TrackPlayer.TRACK_WIDTH / 2f - 1f / subdivisions;
+            float laneWidth = trackWidth / subdivisions;
+            return laneWidth * index - trackWidth / 2f - laneWidth / 2f;
         }
     }
 }
